@@ -105,6 +105,8 @@ class Block(pygame.sprite.Sprite):
         self.image.fill(color)
         self.rect = self.image.get_rect()
 
+block_list = pygame.sprite.Group()        
+        
 # This is a list of every sprite.
 # All blocks and the player block as well.
 all_sprites_list = pygame.sprite.Group()
