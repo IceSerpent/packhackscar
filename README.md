@@ -21,7 +21,7 @@ We learned that you sometimes have to keep on working hard to fix technical diff
 There are many improvements that we can make to Car Game with rotation. First of all, the game itself can be optimized further. The game sometimes locks up. Secondly, we can add an option for those whose paralysis disables them from moving their head in a specific way, and adding the code that can accomodate them. We can also add a multiplayer mode which can have people compete against their family members and or their friends. Lastly, the graphics can be improved. 
 
 # Contributors
-Akshar Yecherla
-Kenan Hasanaliyev
-Aditya Gupta
+Akshar Yecherla,
+Kenan Hasanaliyev,
+Aditya Gupta,
 Pranav Konda
