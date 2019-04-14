@@ -27,6 +27,7 @@ screen = pygame.display.set_mode([screen_width, screen_height])
 
 
 player_img = pygame.image.load('rszcar.png').convert()
+block_img = pygame.image.load('game_obstacle').convert()
 
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "C:/Users/Pranav/Desktop/Vision API Test/car.json"
 
@@ -101,8 +102,7 @@ class Block(pygame.sprite.Sprite):
 
         super().__init__()
         
-        self.image = pygame.Surface([width, height])
-        self.image.fill(color)
+        self.image = block_img
         self.rect = self.image.get_rect()
 
 block_list = pygame.sprite.Group()        
