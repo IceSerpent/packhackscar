@@ -4,7 +4,6 @@ import io
 import cv2
 import os
 import time
-import math
 from threading import Thread
 
 start_time = time.time()
@@ -15,6 +14,7 @@ WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 carState = 2
+score1 = 0
 
 # Initialize Pygame
 pygame.init()
@@ -25,13 +25,13 @@ screen_width = 800
 screen_height = 600
 screen = pygame.display.set_mode([screen_width, screen_height])
 
+player_img = pygame.image.load('rszcarPack.png').convert()
+block_img = pygame.image.load('game_obstacle.png').convert()
 
-player_img = pygame.image.load('rszcar.png').convert()
-block_img = pygame.image.load('game_obstacle').convert()
-
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "C:/Users/Pranav/Desktop/Vision API Test/car.json"
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/Users/kenan/Documents/packHacks.json"
 
 camera_port = 0
+
 
 def get_image():
     camera = cv2.VideoCapture(camera_port)
@@ -39,13 +39,14 @@ def get_image():
     return_value, image = camera.read()
     cv2.imwrite("face.png", image)
 
+
 def text_objects(text, font):
-    screen = font.render(text, True, BLACK)
+    screen = font.render(text, True, WHITE)
     return screen, screen.get_rect()
 
 
 def message_display(text):
-    largeText = pygame.font.Font('freesansbold.ttf', 50)
+    largeText = pygame.font.Font('freesansbold.ttf', 20)
     TextSurf, TextRect = text_objects(text, largeText)
     TextRect.center = (65, 65)
     screen.blit(TextSurf, TextRect)
@@ -72,19 +73,21 @@ def get_angle():
     get_image()
     return roll("face.png")
 
+
 def faceUpdate():
-    while(True):
+    while (True):
         global carState
         faceDegree = get_angle()
         if faceDegree != None:
-            if(faceDegree < -20):
+            if (faceDegree < -20):
                 if carState < 3:
-                    car.rect.x += screen_width/3
+                    car.rect.x += screen_width / 3
                     carState += 1
-            elif(faceDegree > 20):
+            elif (faceDegree > 20):
                 if carState > 1:
-                    car.rect.x -= screen_width/3
+                    car.rect.x -= screen_width / 3
                     carState -= 1
+
 
 class Player(pygame.sprite.Sprite):
     def __init__(self):
@@ -101,12 +104,19 @@ class Block(pygame.sprite.Sprite):
         and its size. """
 
         super().__init__()
-        
+
         self.image = block_img
         self.rect = self.image.get_rect()
 
-block_list = pygame.sprite.Group()        
-        
+class Background(pygame.sprite.Sprite):
+    def __init__(self, image_file, location):
+        pygame.sprite.Sprite.__init__(self)  #call Sprite initializer
+        self.image = pygame.image.load(image_file)
+        self.rect = self.image.get_rect()
+        self.rect.left, self.rect.top = location
+
+block_list = pygame.sprite.Group()
+
 # This is a list of every sprite.
 # All blocks and the player block as well.
 all_sprites_list = pygame.sprite.Group()
@@ -114,13 +124,13 @@ all_sprites_list = pygame.sprite.Group()
 objectW = 100
 objectH = 50
 
-state1x = screen_width/6 - objectW/2
-state2x = screen_width/2 - objectW/2
-state3x = 5*screen_width/6 - objectW/2
+state1x = screen_width / 6 - objectW / 2
+state2x = screen_width / 2 - objectW / 2
+state3x = 5 * screen_width / 6 - objectW / 2
 
 stateArr = [state1x, state2x, state3x]
 
-block = Block(BLACK, objectW, objectH)
+block = Block(GREEN, objectW, objectH)
 
 currentState = random.randint(0, 2)
 state = stateArr[currentState]
@@ -150,7 +160,6 @@ score = 0
 t1 = Thread(target=faceUpdate)
 t1.start()
 
-# -------- Main Program Loop -----------
 while not done:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -166,31 +175,31 @@ while not done:
         #             car.rect.x += screen_width/3
         #             carState += 1
 
-
     # faceUpdate()
-    score = time.time() - start_time
-    print("Score: " + str(score))
-    
-    screen.fill(GREEN)
+
+    BackGround = Background('rszroad.png', [0, 0])
+    screen.fill([255, 255, 255])
+    screen.blit(BackGround.image, BackGround.rect)
+    # screen.fill(GREEN)
 
     pygame.draw.rect(screen, BLACK, ((screen_width / 3) - 5, 0, 10, screen_height))
     pygame.draw.rect(screen, BLACK, ((2 * screen_width / 3) - 5, 0, 10, screen_height))
 
-    if(pygame.sprite.collide_rect(car,block)):
+    if (pygame.sprite.collide_rect(car, block)):
         print("Collision has occurred!")
         done = True
 
-    block.rect.y += 3.5
+    block.rect.y += 8.5
 
-    if(block.rect.y >= screen_height):
-        currentState = random.randint(0,2)
+    if (block.rect.y >= screen_height):
+        currentState = random.randint(0, 2)
         state = stateArr[currentState]
         block.rect.y = -objectH
         block.rect.x = state
-        score = score + 1
+        score1 = score1 + 1
 
     print(score)
-    message_display(str(math.floor(score)))
+    message_display("Score: " + str(score1))
     # pygame.display.update()
 
     all_sprites_list.draw(screen)
